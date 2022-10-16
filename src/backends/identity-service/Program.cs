@@ -3,105 +3,99 @@ using FoodDelivery.IdentityService.WebApi.Interfaces;
 using FoodDelivery.IdentityService.WebApi.Persistence;
 using FoodDelivery.IdentityService.WebApi.Services;
 using FoodDelivery.IdentityService.WebApi.Settings;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
 
-namespace FoodDelivery.IdentityService.WebApi;
+// Add services to the container.
+builder.Services.AddTransient<IDateTimeProvider, MachineDateTimeProvider>();
 
-public class Program
-{
-    public static async Task Main(string[] args)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
+);
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddDefaultIdentity<AppUser>(Identity.ConfigureOptions)
+    .AddRoles<AppRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+var identityServerSettings = builder.Configuration.GetSection(nameof(IdentityServerSettings))
+    .Get<IdentityServerSettings>();
+
+builder.Services.AddIdentityServer(options =>
     {
-        var builder = WebApplication.CreateBuilder(args);
+        options.Events.RaiseSuccessEvents = true;
+        options.Events.RaiseFailureEvents = true;
+        options.Events.RaiseErrorEvents = true;
+    })
+    .AddApiAuthorization<AppUser, ApplicationDbContext>()
+    .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
+    .AddInMemoryClients(identityServerSettings.Clients)
+    .AddInMemoryIdentityResources(identityServerSettings.IdentityResources)
+    .AddDeveloperSigningCredential();
 
-        // Add services to the container.
-        builder.Services.AddTransient<IDateTimeProvider, MachineDateTimeProvider>();
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+builder.Services.AddAuthentication()
+    .AddIdentityServerJwt();
 
-        builder.Services.AddIdentity<AppUser, AppRole>(Identity.ConfigureOptions)
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
-        var identityServerSettings = builder.Configuration.GetSection(nameof(IdentityServerSettings))
-            .Get<IdentityServerSettings>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-        builder.Services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseSuccessEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseErrorEvents = true;
-            })
-            .AddAspNetIdentity<AppUser>()
-            .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
-            .AddInMemoryClients(identityServerSettings.Clients)
-            .AddInMemoryIdentityResources(identityServerSettings.IdentityResources)
-            .AddDeveloperSigningCredential();
+var app = builder.Build();
 
-        builder.Services.AddMvc();
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
 
-        var app = builder.Build();
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
 
-        using (var scope = app.Services.CreateScope())
+        if (context.Database.IsSqlServer())
         {
-            var services = scope.ServiceProvider;
-
-            try
-            {
-                var context = services.GetRequiredService<ApplicationDbContext>();
-
-                if (context.Database.IsSqlServer())
-                {
-                    await context.Database.MigrateAsync();
-                }
-
-                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-                await ApplicationDbContextSeed.SeedRolesAsync(roleManager);
-
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                await ApplicationDbContextSeed.SeedUsersAsync(userManager);
-            }
-            catch (Exception ex)
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-                logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-
-                throw;
-            }
+            await context.Database.MigrateAsync();
         }
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+        await ApplicationDbContextSeed.SeedRolesAsync(roleManager);
 
-        app.UseHttpsRedirection();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        await ApplicationDbContextSeed.SeedUsersAsync(userManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-        app.UseStaticFiles();
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
 
-        app.UseRouting();
-
-        app.UseIdentityServer();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapRazorPages();
-        });
-
-        await app.RunAsync();
+        throw;
     }
 }
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseIdentityServer();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action=Index}/{id?}");
+app.MapRazorPages();
+
+app.Run();

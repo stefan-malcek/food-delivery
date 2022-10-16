@@ -2,6 +2,6 @@
 
 namespace FoodDelivery.IdentityService.WebApi.Entities;
 
-public class AppUser : IdentityUser<Guid>
+public class AppUser : IdentityUser
 {
 }
