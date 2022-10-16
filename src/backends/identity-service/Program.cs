@@ -2,6 +2,7 @@ using FoodDelivery.IdentityService.WebApi.Entities;
 using FoodDelivery.IdentityService.WebApi.Interfaces;
 using FoodDelivery.IdentityService.WebApi.Persistence;
 using FoodDelivery.IdentityService.WebApi.Services;
+using FoodDelivery.IdentityService.WebApi.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,21 @@ public class Program
         builder.Services.AddIdentity<AppUser, AppRole>(Identity.ConfigureOptions)
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        var identityServerSettings = builder.Configuration.GetSection(nameof(IdentityServerSettings))
+            .Get<IdentityServerSettings>();
+
+        builder.Services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseSuccessEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseErrorEvents = true;
+            })
+            .AddAspNetIdentity<AppUser>()
+            .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
+            .AddInMemoryClients(identityServerSettings.Clients)
+            .AddInMemoryIdentityResources(identityServerSettings.IdentityResources)
+            .AddDeveloperSigningCredential();
 
         builder.Services.AddMvc();
         builder.Services.AddControllers();
@@ -74,6 +90,8 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
+
+        app.UseIdentityServer();
 
         app.UseAuthentication();
         app.UseAuthorization();
