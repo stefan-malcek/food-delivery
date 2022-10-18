@@ -15,11 +15,25 @@ export class ApiResponseDto {
 export class ApiDataResponseDto<T> extends ApiResponseDto {
   @ApiHideProperty()
   data: T;
+
+  constructor(data: T, metadata?: ApiMetadata) {
+    super();
+
+    this.data = data;
+    this.metadata = metadata;
+  }
 }
 
 export class ApiArrayDataResponseDto<T> extends ApiResponseDto {
   @ApiHideProperty()
   data: T[];
+
+  constructor(data: T[], metadata?: ApiMetadata) {
+    super();
+
+    this.data = data;
+    this.metadata = metadata;
+  }
 }
 
 export class ApiErrorResponseDto extends ApiResponseDto {
