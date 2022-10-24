@@ -1,22 +1,22 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ProductDto } from '@application/products/queries/get-product-list/product.dto';
-import { ProductDetailDto } from '@application/products/queries/get-product-detail/product-detail.dto';
+import { ProductDto } from '@/products/queries/get-product-list/product.dto';
+import { ProductDetailDto } from '@/products/queries/get-product-detail/product-detail.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { SaveProductDto } from '@application/products/commands/common/save-product.dto';
+import { SaveProductDto } from '@/products/commands/common/save-product.dto';
+import { ApiArrayDataResponse } from '@/common/decorators/api-array-data-response.decorator';
+import { ApiDataResponse } from '@/common/decorators/api-data-response.decorator';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateProductCommand } from '@/products/commands/create-product/create-product.command';
+import { BaseController } from '@/common/controllers/base.controller';
+import { UpdateProductCommand } from '@/products/commands/update-product/update-product.command';
+import { GetProductDetailQuery } from '@/products/queries/get-product-detail/get-product-detail.query';
+import { GetProductListQuery } from '@/products/queries/get-product-list/get-product-list.query';
 import {
   ApiArrayDataResponseDto,
   ApiDataResponseDto,
   ApiResponseDto,
-} from '@application/common/dtos/api-response.dto';
-import { CreatedEntityDto } from '@application/common/dtos/created-entity.dto';
-import { ApiArrayDataResponse } from '@/api/decorators/api-array-data-response.decorator';
-import { ApiDataResponse } from '@/api/decorators/api-data-response.decorator';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateProductCommand } from '@application/products/commands/create-product/create-product.command';
-import { BaseController } from '@/api/controllers/base.controller';
-import { UpdateProductCommand } from '@application/products/commands/update-product/update-product.command';
-import { GetProductDetailQuery } from '@application/products/queries/get-product-detail/get-product-detail.query';
-import { GetProductListQuery } from '@application/products/queries/get-product-list/get-product-list.query';
+} from '@common/dtos/api-response.dto';
+import { CreatedEntityDto } from '@common/dtos/created-entity.dto';
 
 @ApiTags('products')
 @Controller('products')

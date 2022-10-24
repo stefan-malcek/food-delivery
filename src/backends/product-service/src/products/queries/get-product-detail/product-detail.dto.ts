@@ -1,5 +1,5 @@
-import { KeyValuePairDto } from '@application/common/dtos/key-value-pair.dto';
 import { IsUUID, MaxLength, Min } from 'class-validator';
+import { KeyValuePairDto } from '@common/dtos/key-value-pair.dto';
 
 /**
  * Meal product detail.

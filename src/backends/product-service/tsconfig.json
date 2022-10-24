@@ -19,7 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["src/*"],
-      "@application/*": ["src/application/*"]
+      "@common/*": ["src/common/*"],
+      "@products/*": ["src/products/*"]
     }
   }
 }

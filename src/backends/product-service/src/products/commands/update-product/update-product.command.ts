@@ -1,4 +1,4 @@
-import { SaveProductDto } from '@application/products/commands/common/save-product.dto';
+import { SaveProductDto } from '@products/commands/common/save-product.dto';
 
 export class UpdateProductCommand {
   constructor(

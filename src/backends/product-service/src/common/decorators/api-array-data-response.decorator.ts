@@ -1,6 +1,6 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
-import { ApiArrayDataResponseDto } from '@application/common/dtos/api-response.dto';
+import { ApiArrayDataResponseDto } from '@common/dtos/api-response.dto';
 
 export const ApiArrayDataResponse = <TModel extends Type>(model: TModel) => {
   return applyDecorators(

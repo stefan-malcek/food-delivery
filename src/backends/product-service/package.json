@@ -21,10 +21,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@mikro-orm/core": "^5.4.2",
-    "@mikro-orm/mysql": "^5.4.2",
+    "@mikro-orm/core": "~5.4.2",
+    "@mikro-orm/mysql": "~5.4.2",
     "@mikro-orm/nestjs": "^5.1.2",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/cqrs": "^9.0.1",
     "@nestjs/platform-express": "^9.0.0",
@@ -77,7 +78,8 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/../src/$1",
-      "^@application/(.*)$": "<rootDir>/../src/application/$1"
+      "^@common/(.*)$": "<rootDir>/../src/common/$1",
+      "^@products/(.*)$": "<rootDir>/../src/products/$1"
     }
   }
 }
