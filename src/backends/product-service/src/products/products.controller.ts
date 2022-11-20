@@ -1,22 +1,22 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ProductDto } from '@/products/queries/get-product-list/product.dto';
-import { ProductDetailDto } from '@/products/queries/get-product-detail/product-detail.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { SaveProductDto } from '@/products/commands/common/save-product.dto';
+import { BaseController } from '@/common/controllers/base.controller';
 import { ApiArrayDataResponse } from '@/common/decorators/api-array-data-response.decorator';
 import { ApiDataResponse } from '@/common/decorators/api-data-response.decorator';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { SaveProductDto } from '@/products/commands/common/save-product.dto';
 import { CreateProductCommand } from '@/products/commands/create-product/create-product.command';
-import { BaseController } from '@/common/controllers/base.controller';
 import { UpdateProductCommand } from '@/products/commands/update-product/update-product.command';
 import { GetProductDetailQuery } from '@/products/queries/get-product-detail/get-product-detail.query';
+import { ProductDetailDto } from '@/products/queries/get-product-detail/product-detail.dto';
 import { GetProductListQuery } from '@/products/queries/get-product-list/get-product-list.query';
+import { ProductDto } from '@/products/queries/get-product-list/product.dto';
 import {
   ApiArrayDataResponseDto,
   ApiDataResponseDto,
   ApiResponseDto,
 } from '@common/dtos/api-response.dto';
 import { CreatedEntityDto } from '@common/dtos/created-entity.dto';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('products')
 @Controller('products')

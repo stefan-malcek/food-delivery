@@ -1,9 +1,9 @@
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   ApiArrayDataResponseDto,
   ApiDataResponseDto,
   ApiResponseDto,
 } from '@common/dtos/api-response.dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 export abstract class BaseController {
   protected constructor(

@@ -1,7 +1,7 @@
-import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { QueryResult } from '@common/models/query-result.model';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetProductListQuery } from '@products/queries/get-product-list/get-product-list.query';
 import { ProductDto } from '@products/queries/get-product-list/product.dto';
-import { QueryResult } from '@common/models/query-result.model';
 
 @QueryHandler(GetProductListQuery)
 export class GetProductListQueryHandler

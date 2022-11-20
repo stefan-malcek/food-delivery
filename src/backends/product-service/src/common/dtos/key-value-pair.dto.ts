@@ -1,4 +1,5 @@
 import { IsUUID } from 'class-validator';
+
 /**
  * Key value a pair of the given entity.
  */
