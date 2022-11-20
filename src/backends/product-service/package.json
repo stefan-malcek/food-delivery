@@ -18,12 +18,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "mikro-orm": "mikro-orm",
+    "mikro-orm:seed": "mikro-orm schema:fresh --schema --seed"
   },
   "dependencies": {
+    "@mikro-orm/cli": "~5.4.2",
     "@mikro-orm/core": "~5.4.2",
     "@mikro-orm/mysql": "~5.4.2",
     "@mikro-orm/nestjs": "^5.1.2",
+    "@mikro-orm/seeder": "~5.4.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
@@ -81,5 +85,9 @@
       "^@common/(.*)$": "<rootDir>/../src/common/$1",
       "^@products/(.*)$": "<rootDir>/../src/products/$1"
     }
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": ["./src/mikro-orm.config.ts"]
   }
 }

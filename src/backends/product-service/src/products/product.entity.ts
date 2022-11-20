@@ -6,7 +6,7 @@ export class Product extends BaseEntity {
   @Property({ length: 100 })
   name!: string;
 
-  @Property()
+  @Property({ columnType: 'decimal(19,4)' })
   price!: number;
 
   @Property({ columnType: 'text' })

@@ -1,14 +1,15 @@
-import { PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 
+@Entity({ abstract: true })
 export abstract class BaseEntity {
-  @PrimaryKey()
+  @PrimaryKey({ type: 'uuid' })
   uuid: string = v4();
 
-  @Property()
+  @Property({ type: 'timestamp' })
   createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'timestamp', onUpdate: () => new Date() })
   updatedAt = new Date();
 
   @Property({ version: true })
